@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,25 +17,29 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate ()
 	{
+		//Update movement
 		float Horz = Input.GetAxis(HorzAxis);
-        float Vert = Input.GetAxis(VertAxis);
-
+		float Vert = Input.GetAxis(VertAxis);
 		Vector3 MoveDirection = new Vector3(Horz, 0.0f, Vert);
 		ThisBody.AddForce(MoveDirection.normalized * MaxSpeed);
 		
+		//Clamp speed
 		ThisBody.velocity = new Vector3(Mathf.Clamp(ThisBody.velocity.x, -MaxSpeed, MaxSpeed),
 		                                Mathf.Clamp(ThisBody.velocity.y, -MaxSpeed, MaxSpeed),
 		                                Mathf.Clamp(ThisBody.velocity.z, -MaxSpeed, MaxSpeed));
 		
+		//Should look with mouse?
 		if(MouseLook)
 		{
-			Vector3 MousePosWorld = Camera.main.ScreenToWorldPoint(
-                new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f)
-            );
-			MousePosWorld = 
-                new Vector3(MousePosWorld.x, 0.0f, MousePosWorld.z);
-                Vector3 LookDirection = MousePosWorld - transform.position;
-                transform.localRotation = Quaternion.LookRotation(LookDirection.normalized,Vector3.up);
+			//Update rotation - turn to face mouse pointer
+			Vector3 MousePosWorld = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
+			MousePosWorld = new Vector3(MousePosWorld.x, 0.0f, MousePosWorld.z);
+			
+			//Get direction to cursor
+			Vector3 LookDirection = MousePosWorld - transform.position;
+			
+			//FixedUpdate rotation
+			transform.localRotation = Quaternion.LookRotation(LookDirection.normalized,Vector3.up);
 		}
 	}
 }
